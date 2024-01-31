@@ -82,7 +82,10 @@ misstable sum chrondisease_69 disa_69 cogchild attain_26 delir2 sex hippoa_bsi2 
 *-----------------------------------------------------UNIMPUTED DATA-----------------------------------------------------
 *DESCRIPTIVE TABLE
 drop if mjrbrain_none!=1
-dtable cogchild i.i46_edu i.socialclass i.chrondisease_69 disa_69 pp_69 sex i.smokingstat15x apoe3 brain_vol1 brain_vol2 pacc_i46p1 pacc_i46p2 wmc_tot status_composite_wm_bl, by(delir2, nototals testnotes test) title(Table 1. Sample Characteristics) export(table1-24.docx, replace)
+dtable cogchild i.i46_edu i.socialclass i.chrondisease_69 i.disa_69 i.pp_69 i.sex i.smokingstat15x i.apoe3 spm_tiv_vol1 pacc_i46p1 pacc_i46p2 wmc_tot i.status_composite_wm_bl, by(delir2, nototals testnotes test) title(Table 1. Sample Characteristics) export(table1-24.docx, replace)
+gen delirmiss=0
+replace delirmiss=1 if delir2==.
+dtable cogchild i.i46_edu i.socialclass i.chrondisease_69 i.disa_69 i.pp_69 i.sex i.smokingstat15x i.apoe3 spm_tiv_vol1 pacc_i46p1 pacc_i46p2 wmc_tot i.status_composite_wm_bl, by(delirmiss, nototals testnotes test) title(Table 1b. Missing Sample Characteristics) export(table1b-24.docx, replace)
 
 *MARGINS PLOT FOR AMYLOID ANALYSES (FIGURE 2A)
 regress brain_bsi2 delir2##status_composite_wm_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
