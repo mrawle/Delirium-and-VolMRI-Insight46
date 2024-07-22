@@ -78,272 +78,344 @@ gen pp_69 = PP_69
 drop if brain_bsi2==.
 misstable sum chrondisease_69 disa_69 cogchild attain_26 delir2 sex hippoa_bsi2 brain_bsi2 pp_69 gapdatey APOEnew wmc_tot mci_i46p1 mci_i46p2 smokingstat15x suvr_composite_wc_change2 suvr_parietal_wc_change2 suvr_temporal_wc_change2 suvr_composite_wm_change2 suvr_temporal_wm_change2 suvr_parietal_wm_change2 suvr_composite_wm_bl suvr_parietal_wm_bl suvr_temporal_wm_bl suvr_parietal_wc_bl suvr_composite_wc_bl suvr_temporal_wc_bl, generate(M)
 
+save "use "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2024\working set for upload.dta", clear
+
 *-----------------------------------------------------ANALYSES-----------------------------------------------------
 *-----------------------------------------------------UNIMPUTED DATA-----------------------------------------------------
 *DESCRIPTIVE TABLE
+use "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2024\working set for upload.dta", clear
 drop if mjrbrain_none!=1
-dtable cogchild i.i46_edu i.socialclass i.chrondisease_69 i.disa_69 i.pp_69 i.sex i.smokingstat15x i.apoe3 spm_tiv_vol1 pacc_i46p1 pacc_i46p2 wmc_tot i.status_composite_wm_bl, by(delir2, nototals testnotes test) title(Table 1. Sample Characteristics) export(table1-24.docx, replace)
+
+dtable cogchild i.i46_edu i.socialclass i.chrondisease_69 i.disa_69 i.pp_69 i.sex i.smokingstat15x i.apoe3 brain_vol1 brain_vol2 pacc_i46p1 pacc_i46p2 wmc_tot i.status_composite_wm_pvc_bl scanage, by(delir2, nototals testnotes test) title(Table 1. Sample Characteristics) export(JUL dtable.docx, replace)
 gen delirmiss=0
 replace delirmiss=1 if delir2==.
-dtable cogchild i.i46_edu i.socialclass i.chrondisease_69 i.disa_69 i.pp_69 i.sex i.smokingstat15x i.apoe3 spm_tiv_vol1 pacc_i46p1 pacc_i46p2 wmc_tot i.status_composite_wm_bl, by(delirmiss, nototals testnotes test) title(Table 1b. Missing Sample Characteristics) export(table1b-24.docx, replace)
+dtable cogchild i.i46_edu i.socialclass i.chrondisease_69 i.disa_69 i.pp_69 i.sex i.smokingstat15x i.apoe3 brain_vol1 brain_vol2 pacc_i46p1 pacc_i46p2 wmc_tot i.status_composite_wm_pvc_bl scanage, by(delirmiss, nototals testnotes test) title(Table 1b. Missing Sample Characteristics) export(JUL dtable miss.docx, replace)
 
-*MARGINS PLOT FOR AMYLOID ANALYSES (FIGURE 2A)
-regress brain_bsi2 delir2##status_composite_wm_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-margins, at(gapdatey=(0 0.5 1 1.5 2) delir2=(0 1) status_composite_wm_bl=(0 1)) atmeans asbalance
-marginsplot, plot1opts(lcolor(navy) lpattern(solid) mcolor(navy) msymbol(circle)) plot2opts(lcolor(forest_green) lpattern(solid) mcolor(forest_green) msymbol(triangle)) plot3opts(lcolor(sand) lpattern(solid) mcolor(sand) msymbol(diamond)) plot4opts(lcolor(maroon) lpattern(solid) mcolor(maroon) msymbol(square)) ytitle(`"Brain volume (% loss)"') xtitle(`"Time (years)"') noci legend(off) name(margin1a)
+*TABLE ONE COMPLETE CASE
+collect clear
+collect create completecasetable1
 
-regress hippoa_bsi2 delir2##status_composite_wm_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-margins, at(gapdatey=(0 0.5 1 1.5 2) delir2=(0 1) status_composite_wm_bl=(0 1)) atmeans asbalance
-marginsplot, plot1opts(lcolor(navy) lpattern(solid) mcolor(navy) msymbol(circle)) plot2opts(lcolor(forest_green) lpattern(solid) mcolor(forest_green) msymbol(triangle)) plot3opts(lcolor(sand) lpattern(solid) mcolor(sand) msymbol(diamond)) plot4opts(lcolor(maroon) lpattern(solid) mcolor(maroon) msymbol(square)) ytitle(`"Hippocampal volume (% loss)"') xtitle(`"Time (years)"') noci legend(off) name(margin2a)
+collect _r_b _r_ci _r_p, tag(model[(1)]): regress brain_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_pvc_bl#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(1)]): testparm i.chrondisease_69#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(2)]): regress hippoa2_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_pvc_bl#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(2)]): testparm i.chrondisease_69#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(3)]): regress vent_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_pvc_bl#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(3)]): testparm i.chrondisease_69#c.gapdatey
 
-regress vent_bsi2 delir2##status_composite_wm_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-margins, at(gapdatey=(0 0.5 1 1.5 2) delir2=(0 1) status_composite_wm_bl=(0 1)) atmeans asbalance
-marginsplot, plot1opts(lcolor(navy) lpattern(solid) mcolor(navy) msymbol(circle)) plot2opts(lcolor(forest_green) lpattern(solid) mcolor(forest_green) msymbol(triangle)) plot3opts(lcolor(sand) lpattern(solid) mcolor(sand) msymbol(diamond)) plot4opts(lcolor(maroon) lpattern(solid) mcolor(maroon) msymbol(square)) ytitle(`"Ventricular volume (% increase)"') xtitle(`"Time (years)"') noci legend(off) name(margin3a)
+collect layout (colname#result result[p_e]) (model)
+collect style cell, nformat(%5.2f)
+collect style cell result [_r_ci], sformat("(%s)") cidelimiter(", ")
+collect style cell result [_r_p], nformat(%5.2f)
+collect style cell border_block, border(right, pattern(nil))
+collect levelsof cell_type
+collect style cell cell_type[item column-header], halign(center)
+collect style header result, level(hide)
+collect style column, extraspace(1)
+collect style row stack, spacer delimiter(" x ")
+collect style header result[p_e], level(label)
+collect label levels result p_e "p-value for chronic disease count"
+collect style cell result [p_e], nformat(%5.2f)
+collect style showbase off
+collect title "Complete case associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
 
-graph combine margin1a margin2a margin3a
+collect export JULcompletecasetable1.docx, replace
 
-*MARGINS PLOT FOR WMC ANALYSES (FIGURE 2B) ?WORKS
-regress brain_bsi2 delir2##c.wmc_tot#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-margins, at(gapdatey=(0 0.5 1 1.5 2) delir2=(0 1) status_composite_wm_bl=(0 1)) atmeans asbalance
-marginsplot, plot1opts(lcolor(navy) lpattern(solid) mcolor(navy) msymbol(circle)) plot2opts(lcolor(forest_green) lpattern(solid) mcolor(forest_green) msymbol(triangle)) plot3opts(lcolor(sand) lpattern(solid) mcolor(sand) msymbol(diamond)) plot4opts(lcolor(maroon) lpattern(solid) mcolor(maroon) msymbol(square)) ytitle(`"Brain volume (% loss)"') xtitle(`"Time (years)"') noci legend(off) name(margin1b)
+*TABLE TWO COMPLETE CASE
+collect clear
+collect create completecasetable2
 
-regress hippoa_bsi2 delir2##c.wmc_tot#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-margins, at(gapdatey=(0 0.5 1 1.5 2) delir2=(0 1) status_composite_wm_bl=(0 1)) atmeans asbalance
-marginsplot, plot1opts(lcolor(navy) lpattern(solid) mcolor(navy) msymbol(circle)) plot2opts(lcolor(forest_green) lpattern(solid) mcolor(forest_green) msymbol(triangle)) plot3opts(lcolor(sand) lpattern(solid) mcolor(sand) msymbol(diamond)) plot4opts(lcolor(maroon) lpattern(solid) mcolor(maroon) msymbol(square)) ytitle(`"Hippocampal volume (% loss)"') xtitle(`"Time (years)"') noci legend(off) legend(off) name(margin2b)
+collect _r_b _r_ci _r_p, tag(model[(1)]): regress brain_bsi2 delir2##status_composite_wm_pvc_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(1)]): testparm i.chrondisease_69#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(2)]): regress hippoa2_bsi2 delir2##status_composite_wm_pvc_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(2)]): testparm i.chrondisease_69#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(3)]): regress vent_bsi2 delir2##status_composite_wm_pvc_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(3)]): testparm i.chrondisease_69#c.gapdatey
 
-regress vent_bsi2 delir2##c.wmc_tot#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-margins, at(gapdatey=(0 0.5 1 1.5 2) delir2=(0 1) status_composite_wm_bl=(0 1)) atmeans asbalance
-marginsplot, plot1opts(lcolor(navy) lpattern(solid) mcolor(navy) msymbol(circle)) plot2opts(lcolor(forest_green) lpattern(solid) mcolor(forest_green) msymbol(triangle)) plot3opts(lcolor(sand) lpattern(solid) mcolor(sand) msymbol(diamond)) plot4opts(lcolor(maroon) lpattern(solid) mcolor(maroon) msymbol(square)) ytitle(`"Ventricular volume (% increase)"') xtitle(`"Time (years)"') noci legend(off) name(margin3b)
+collect layout (colname#result result[p_e]) (model)
+collect style cell, nformat(%5.2f)
+collect style cell result [_r_ci], sformat("(%s)") cidelimiter(", ")
+collect style cell result [_r_p], nformat(%5.2f)
+collect style cell border_block, border(right, pattern(nil))
+collect levelsof cell_type
+collect style cell cell_type[item column-header], halign(center)
+collect style header result, level(hide)
+collect style column, extraspace(1)
+collect style row stack, spacer delimiter(" x ")
+collect style header result[p_e], level(label)
+collect label levels result p_e "p-value for chronic disease count"
+collect style cell result [p_e], nformat(%5.2f)
+collect style showbase off
+collect title "Complete case amyloid adjusted associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
 
-graph combine margin1b margin2b margin3b
+collect export JULcompletecasetable2.docx, replace
+
 
 *-----------------------------------------------------IMPUTED DATA-----------------------------------------------------
 *IMPUTE
+use "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2024\working set for upload.dta", clear
+drop if mjrbrain_none!=1
 mi set flong
-mi register imputed chrondisease_69 disa_69 delir2 pp_69 apoe3 status_composite_wm_bl wmc_tot
-mi impute chained (logit) disa_69 delir2 pp_69 status_composite_wm_bl apoe3 (ologit) chrondisease_69 (pmm, knn(5)) wmc_tot = brain_bsi2 hippoa_bsi2 vent_bsi2 spm_tiv_vol1 cogchild smokingstat15x i46_edu gapdatey sex socialclass, rseed(270186) add(10) augment
+mi register imputed chrondisease_69 disa_69 delir2 pp_69 apoe3 wmc_tot
+mi impute chained (logit) disa_69 delir2 pp_69 apoe3 (ologit) chrondisease_69 (pmm, knn(5)) wmc_tot = brain_bsi2 hippoa2_bsi2 vent_bsi2 spm_tiv_vol1 cogchild smokingstat15x i46_edu gapdatey sex socialclass scanage, by(status_composite_wm_pvc_bl) rseed(270186) add(10) augment
 
-*CREATE TABLES (TABLE 2A, 2B, 2C)
-*BRAIN CHANGE (TABLE 2A)
+*FINAL MODEL TABLE ONE
 collect clear
-collect create ex2a
+collect create finalmodeltable1
 
-collect _r_b _r_ci _r_p, tag(model[(1)]): mi estimate: regress brain_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey c.gapdatey, nocons
-collect _r_b _r_ci _r_p, tag(model[(2)]): mi estimate: regress brain_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey i46_edu#c.gapdatey c.cogchild#c.gapdatey socialclass#c.gapdatey c.gapdatey, nocons
-collect p_e=r(p), tag(model[(2)]): mi test 1.i46_edu#c.gapdatey 2.i46_edu#c.gapdatey
-collect p_f=r(p), tag(model[(2)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
-collect _r_b _r_ci _r_p, tag(model[(3)]): mi estimate: regress brain_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey disa_69#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey smokingstat15x#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-collect p_g=r(p), tag(model[(3)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
-collect p_h=r(p), tag(model[(3)]): mi test 1.smokingstat15x#c.gapdatey 2.smokingstat15x#c.gapdatey
-collect _r_b _r_ci _r_p, tag(model[(4)]): mi estimate: regress brain_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-collect p_f=r(p), tag(model[(4)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
-collect p_g=r(p), tag(model[(4)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(1)]): mi estimate: regress brain_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_pvc_bl#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(1)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(2)]): mi estimate: regress hippoa2_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_pvc_bl#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(2)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(3)]): mi estimate: regress vent_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_pvc_bl#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(3)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
 
-collect layout (colname#result result[p_e p_f p_g p_h]) (model)
+collect layout (colname#result result[p_e]) (model)
 collect style cell, nformat(%5.2f)
 collect style cell result [_r_ci], sformat("(%s)") cidelimiter(", ")
-collect style cell result [_r_p], nformat(%5.3f)
+collect style cell result [_r_p], nformat(%5.2f)
 collect style cell border_block, border(right, pattern(nil))
 collect levelsof cell_type
 collect style cell cell_type[item column-header], halign(center)
 collect style header result, level(hide)
 collect style column, extraspace(1)
 collect style row stack, spacer delimiter(" x ")
-collect stars _r_p 0.01 "***" 0.05 "** " 0.1 "*  ", attach(_r_b) /*shownote*/
-/*collect notes : "*** p<0.01, ** p<0.05, * p<0.1"*/
-collect style header result[p_e p_f p_g p_h], level(label)
-collect label levels result p_e "p-value for education" p_f "p-value for social class" p_g "p-value for chronic disease count" p_h "p-value from smoking status"
-collect style cell result [p_e p_f p_g p_h], nformat(%5.3f) /*minimum(0.001)*/
-collect style showbase off
-collect title "Associations between total brain volume change (BSI) and delirium"
-
-collect export table2a24.docx, replace
-
-*HIPPOCAMPAL CHANGE (TABLE 2B)
-collect clear
-collect create ex2b
-
-collect _r_b _r_ci _r_p, tag(model[(1)]): mi estimate: regress hippoa_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey c.gapdatey, nocons
-collect _r_b _r_ci _r_p, tag(model[(2)]): mi estimate: regress hippoa_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey i46_edu#c.gapdatey c.cogchild#c.gapdatey socialclass#c.gapdatey c.gapdatey, nocons
-collect p_e=r(p), tag(model[(2)]): mi test 1.i46_edu#c.gapdatey 2.i46_edu#c.gapdatey
-collect p_f=r(p), tag(model[(2)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
-collect _r_b _r_ci _r_p, tag(model[(3)]): mi estimate: regress hippoa_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey disa_69#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey smokingstat15x#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-collect p_g=r(p), tag(model[(3)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
-collect p_h=r(p), tag(model[(3)]): mi test 1.smokingstat15x#c.gapdatey 2.smokingstat15x#c.gapdatey
-collect _r_b _r_ci _r_p, tag(model[(4)]): mi estimate: regress hippoa_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-collect p_f=r(p), tag(model[(4)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
-collect p_g=r(p), tag(model[(4)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
-
-collect layout (colname#result result[p_e p_f p_g p_h]) (model)
-collect style cell, nformat(%5.2f)
-collect style cell result [_r_ci], sformat("(%s)") cidelimiter(", ")
-collect style cell result [_r_p], nformat(%5.3f)
-collect style cell border_block, border(right, pattern(nil))
-collect levelsof cell_type
-collect style cell cell_type[item column-header], halign(center)
-collect style header result, level(hide)
-collect style column, extraspace(1)
-collect style row stack, spacer delimiter(" x ")
-collect stars _r_p 0.01 "***" 0.05 "** " 0.1 "*  ", attach(_r_b) /*shownote*/
-/*collect notes : "*** p<0.01, ** p<0.05, * p<0.1"*/
-collect style header result[p_e p_f p_g p_h], level(label)
-collect label levels result p_e "p-value for education" p_f "p-value for social class" p_g "p-value for chronic disease count" p_h "p-value from smoking status"
-collect style cell result [p_e p_f p_g p_h], nformat(%5.3f) /*minimum(0.001)*/
-collect style showbase off
-collect title "Associations between total hippocampal volume change (BSI) and delirium"
-
-collect export table2b24.docx, replace
-
-*VENTRICULAR CHANGE (TABLE 2C)
-collect clear
-collect create ex2c
-
-collect _r_b _r_ci _r_p, tag(model[(1)]): mi estimate: regress vent_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey c.gapdatey, nocons
-collect _r_b _r_ci _r_p, tag(model[(2)]): mi estimate: regress vent_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey i46_edu#c.gapdatey c.cogchild#c.gapdatey socialclass#c.gapdatey c.gapdatey, nocons
-collect p_e=r(p), tag(model[(2)]): mi test 1.i46_edu#c.gapdatey 2.i46_edu#c.gapdatey
-collect p_f=r(p), tag(model[(2)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
-collect _r_b _r_ci _r_p, tag(model[(3)]): mi estimate: regress vent_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey disa_69#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey smokingstat15x#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-collect p_g=r(p), tag(model[(3)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
-collect p_h=r(p), tag(model[(3)]): mi test 1.smokingstat15x#c.gapdatey 2.smokingstat15x#c.gapdatey
-collect _r_b _r_ci _r_p, tag(model[(4)]): mi estimate: regress vent_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-collect p_f=r(p), tag(model[(4)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
-collect p_g=r(p), tag(model[(4)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
-
-collect layout (colname#result result[p_e p_f p_g p_h]) (model)
-collect style cell, nformat(%5.2f)
-collect style cell result [_r_ci], sformat("(%s)") cidelimiter(", ")
-collect style cell result [_r_p], nformat(%5.3f)
-collect style cell border_block, border(right, pattern(nil))
-collect levelsof cell_type
-collect style cell cell_type[item column-header], halign(center)
-collect style header result, level(hide)
-collect style column, extraspace(1)
-collect style row stack, spacer delimiter(" x ")
-collect stars _r_p 0.01 "***" 0.05 "** " 0.1 "*  ", attach(_r_b) /*shownote*/
-/*collect notes : "*** p<0.01, ** p<0.05, * p<0.1"*/
-collect style header result[p_e p_f p_g p_h], level(label)
-collect label levels result p_e "p-value for education" p_f "p-value for social class" p_g "p-value for chronic disease count" p_h "p-value from smoking status"
-collect style cell result [p_e p_f p_g p_h], nformat(%5.3f) /*minimum(0.001)*/
-collect style showbase off
-collect title "Associations between total ventricular volume change (BSI) and delirium"
-
-collect export table2c24.docx, replace
-
-
-*USABLE TABLE OF FULLY ADJUSTED ANALYSES (MODEL 4 FOR EACH BRAIN IMAGE TYPE, VENT/BRAIN/HIPPO)
-collect clear
-collect create ex2use
-
-collect _r_b _r_ci _r_p, tag(model[(1)]): mi estimate: regress brain_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-collect p_e=r(p), tag(model[(1)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
-collect p_f=r(p), tag(model[(1)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
-collect _r_b _r_ci _r_p, tag(model[(2)]): mi estimate: regress hippoa_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-collect p_e=r(p), tag(model[(2)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
-collect p_f=r(p), tag(model[(2)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
-collect _r_b _r_ci _r_p, tag(model[(3)]): mi estimate: regress vent_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-collect p_e=r(p), tag(model[(3)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
-collect p_f=r(p), tag(model[(3)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
-
-collect layout (colname#result result[p_e p_f]) (model)
-collect style cell, nformat(%5.2f)
-collect style cell result [_r_ci], sformat("(%s)") cidelimiter(", ")
-collect style cell result [_r_p], nformat(%5.3f)
-collect style cell border_block, border(right, pattern(nil))
-collect levelsof cell_type
-collect style cell cell_type[item column-header], halign(center)
-collect style header result, level(hide)
-collect style column, extraspace(1)
-collect style row stack, spacer delimiter(" x ")
-collect stars _r_p 0.01 "***" 0.05 "** " 0.1 "*  ", attach(_r_b) /*shownote*/
-/*collect notes : "*** p<0.01, ** p<0.05, * p<0.1"*/
-collect style header result[p_e p_f], level(label)
-collect label levels result p_e "p-value for social class" p_f "p-value for chronic disease count"
-collect style cell result [p_e p_f], nformat(%5.3f) /*minimum(0.001)*/
+collect style header result[p_e], level(label)
+collect label levels result p_e "p-value for chronic disease count"
+collect style cell result [p_e], nformat(%5.2f)
 collect style showbase off
 collect title "Associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
 
-collect export table2use24.docx, replace
+collect export finalmodeltable1.docx, replace
 
-*-----------------------------------------------------STRATIFIED ANALYSES-----------------------------------------------------
-*STRATIFIED BY AMYLOID STATUS (TABLE 3A)
+*FINAL MODEL TABLE 2
 collect clear
-collect create ex3a
+collect create finalmodeltable2
 
-collect _r_b _r_ci _r_p, tag(model[(1)]): mi estimate: regress brain_bsi2 delir2##status_composite_wm_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-collect p_e=r(p), tag(model[(1)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
-collect p_f=r(p), tag(model[(1)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
-collect _r_b _r_ci _r_p, tag(model[(2)]): mi estimate: regress hippoa_bsi2 delir2##status_composite_wm_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-collect p_e=r(p), tag(model[(2)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
-collect p_f=r(p), tag(model[(2)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
-collect _r_b _r_ci _r_p, tag(model[(3)]): mi estimate: regress vent_bsi2 delir2##status_composite_wm_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-collect p_e=r(p), tag(model[(3)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
-collect p_f=r(p), tag(model[(3)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(1)]): mi estimate: regress brain_bsi2 delir2##status_composite_wm_pvc_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(1)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(2)]): mi estimate: regress hippoa2_bsi2 delir2##status_composite_wm_pvc_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(2)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(3)]): mi estimate: regress vent_bsi2 delir2##status_composite_wm_pvc_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(3)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
 
-collect layout (colname#result result[p_e p_f]) (model)
+collect layout (colname#result result[p_e]) (model)
 collect style cell, nformat(%5.2f)
 collect style cell result [_r_ci], sformat("(%s)") cidelimiter(", ")
-collect style cell result [_r_p], nformat(%5.3f)
+collect style cell result [_r_p], nformat(%5.2f)
 collect style cell border_block, border(right, pattern(nil))
 collect levelsof cell_type
 collect style cell cell_type[item column-header], halign(center)
 collect style header result, level(hide)
 collect style column, extraspace(1)
 collect style row stack, spacer delimiter(" x ")
-collect stars _r_p 0.01 "***" 0.05 "** " 0.1 "*  ", attach(_r_b) /*shownote*/
-/*collect notes : "*** p<0.01, ** p<0.05, * p<0.1"*/
-collect style header result[p_e p_f], level(label)
-collect label levels result p_e "p-value for social class" p_f "p-value for chronic disease count"
-collect style cell result [p_e p_f], nformat(%5.3f) /*minimum(0.001)*/
+collect style header result[p_e], level(label)
+collect label levels result p_e "p-value for chronic disease count"
+collect style cell result [p_e], nformat(%5.2f)
 collect style showbase off
-collect title "Associations between total brain, hippocampal and ventricular volume change (BSI) and delirium and amyloid interactions"
+collect title "Associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
 
-collect export table3a24.docx, replace
+collect export finalmodeltable2.docx, replace
 
-*STRATIFIED BY WMC STATUS (TABLE 3B)
+*----------------------------------------------SENSITIVITY ANALYSES-------------------------------------------------------
+
+*SEX ADJUSTED MODEL TABLE ONE
 collect clear
-collect create ex3ause
+collect create sexadjustedtable1
 
-collect _r_b _r_ci _r_p, tag(model[(1)]): mi estimate: regress brain_bsi2 delir2##c.wmc_tot#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-collect p_e=r(p), tag(model[(1)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
-collect p_f=r(p), tag(model[(1)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
-collect _r_b _r_ci _r_p, tag(model[(2)]): mi estimate: regress hippoa_bsi2 delir2##c.wmc_tot#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-collect p_e=r(p), tag(model[(2)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
-collect p_f=r(p), tag(model[(2)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
-collect _r_b _r_ci _r_p, tag(model[(3)]): mi estimate: regress vent_bsi2 delir2##c.wmc_tot#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
-collect p_e=r(p), tag(model[(3)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
-collect p_f=r(p), tag(model[(3)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(1)]): mi estimate: regress brain_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey c.scanage#c.gapdatey c.gapdatey, nocons
+collect _r_b _r_ci _r_p, tag(model[(2)]): mi estimate: regress hippoa2_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect _r_b _r_ci _r_p, tag(model[(3)]): mi estimate: regress vent_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
 
-collect layout (colname#result result[p_e p_f]) (model)
+collect layout (colname#result) (model)
 collect style cell, nformat(%5.2f)
 collect style cell result [_r_ci], sformat("(%s)") cidelimiter(", ")
-collect style cell result [_r_p], nformat(%5.3f)
+collect style cell result [_r_p], nformat(%5.2f)
 collect style cell border_block, border(right, pattern(nil))
 collect levelsof cell_type
 collect style cell cell_type[item column-header], halign(center)
 collect style header result, level(hide)
 collect style column, extraspace(1)
 collect style row stack, spacer delimiter(" x ")
-collect stars _r_p 0.01 "***" 0.05 "** " 0.1 "*  ", attach(_r_b) /*shownote*/
-/*collect notes : "*** p<0.01, ** p<0.05, * p<0.1"*/
-collect style header result[p_e p_f], level(label)
-collect label levels result p_e "p-value for social class" p_f "p-value for chronic disease count"
-collect style cell result [p_e p_f], nformat(%5.3f) /*minimum(0.001)*/
 collect style showbase off
-collect title "Associations between total brain, hippocampal and ventricular volume change (BSI) and delirium and amyloid interactions"
+collect title "Sex-adjusted associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
 
-collect export table3b24.docx, replace
+collect export sexadjustedtable1.docx, replace
+
+*SEX ADJUSTED TABLE 2
+collect clear
+collect create sexadjustedtable2
+
+collect _r_b _r_ci _r_p, tag(model[(1)]): mi estimate: regress brain_bsi2 delir2##status_composite_wm_pvc_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey c.scanage#c.gapdatey c.gapdatey, nocons
+collect _r_b _r_ci _r_p, tag(model[(2)]): mi estimate: regress hippoa2_bsi2 delir2##status_composite_wm_pvc_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect _r_b _r_ci _r_p, tag(model[(3)]): mi estimate: regress vent_bsi2 delir2##status_composite_wm_pvc_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+
+collect layout (colname#result) (model)
+collect style cell, nformat(%5.2f)
+collect style cell result [_r_ci], sformat("(%s)") cidelimiter(", ")
+collect style cell result [_r_p], nformat(%5.2f)
+collect style cell border_block, border(right, pattern(nil))
+collect levelsof cell_type
+collect style cell cell_type[item column-header], halign(center)
+collect style header result, level(hide)
+collect style column, extraspace(1)
+collect style row stack, spacer delimiter(" x ")
+collect style showbase off
+collect title "Sex-adjusted associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
+
+collect export sexadjustedtable2.docx, replace
+
+*A PRIORI TABLE 1
+collect clear
+collect create aprioritable1
+
+collect _r_b _r_ci _r_p, tag(model[(1)]): mi estimate: regress brain_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_pvc_bl#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey socialclass#c.gapdatey i46_edu#c.gapdatey c.cogchild#c.gapdatey smokingstat15x#c.gapdatey disa_69#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(1)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect p_f=r(p), tag(model[(1)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
+collect p_g=r(p), tag(model[(1)]): mi test 1.i46_edu#c.gapdatey 2.i46_edu#c.gapdatey
+collect p_h=r(p), tag(model[(1)]): mi test 1.smokingstat15x#c.gapdatey 2.smokingstat15x#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(2)]): mi estimate: regress hippoa2_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_pvc_bl#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey socialclass#c.gapdatey i46_edu#c.gapdatey c.cogchild#c.gapdatey smokingstat15x#c.gapdatey disa_69#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(2)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect p_f=r(p), tag(model[(2)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
+collect p_g=r(p), tag(model[(2)]): mi test 1.i46_edu#c.gapdatey 2.i46_edu#c.gapdatey
+collect p_h=r(p), tag(model[(2)]): mi test 1.smokingstat15x#c.gapdatey 2.smokingstat15x#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(3)]): mi estimate: regress vent_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_pvc_bl#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey socialclass#c.gapdatey i46_edu#c.gapdatey c.cogchild#c.gapdatey smokingstat15x#c.gapdatey disa_69#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(3)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect p_f=r(p), tag(model[(3)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
+collect p_g=r(p), tag(model[(3)]): mi test 1.i46_edu#c.gapdatey 2.i46_edu#c.gapdatey
+collect p_h=r(p), tag(model[(3)]): mi test 1.smokingstat15x#c.gapdatey 2.smokingstat15x#c.gapdatey
+
+collect layout (colname#result result[p_e p_f p_g p_h]) (model)
+collect style cell, nformat(%5.2f)
+collect style cell result [_r_ci], sformat("(%s)") cidelimiter(", ")
+collect style cell result [_r_p], nformat(%5.2f)
+collect style cell border_block, border(right, pattern(nil))
+collect levelsof cell_type
+collect style cell cell_type[item column-header], halign(center)
+collect style header result, level(hide)
+collect style column, extraspace(1)
+collect style row stack, spacer delimiter(" x ")
+collect style header result[p_e p_f p_g p_h], level(label)
+collect label levels result p_e "p-value for chronic disease count" p_f "p-value for social class" p_g "p-value for educational attainment" p_h "p-value for smoking status"
+collect style cell result [p_e p_f p_g p_h], nformat(%5.2f)
+collect style showbase off
+collect title "A priori model associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
+
+collect export aprioritable1.docx, replace
+
+*A PRIORI TABLE 2
+collect clear
+collect create aprioritable2
+
+collect _r_b _r_ci _r_p, tag(model[(1)]): mi estimate: regress brain_bsi2 delir2##status_composite_wm_pvc_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey socialclass#c.gapdatey i46_edu#c.gapdatey c.cogchild#c.gapdatey smokingstat15x#c.gapdatey disa_69#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(1)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect p_f=r(p), tag(model[(1)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
+collect p_g=r(p), tag(model[(1)]): mi test 1.i46_edu#c.gapdatey 2.i46_edu#c.gapdatey
+collect p_h=r(p), tag(model[(1)]): mi test 1.smokingstat15x#c.gapdatey 2.smokingstat15x#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(2)]): mi estimate: regress hippoa2_bsi2 delir2##status_composite_wm_pvc_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey socialclass#c.gapdatey i46_edu#c.gapdatey c.cogchild#c.gapdatey smokingstat15x#c.gapdatey disa_69#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(2)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect p_f=r(p), tag(model[(2)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
+collect p_g=r(p), tag(model[(2)]): mi test 1.i46_edu#c.gapdatey 2.i46_edu#c.gapdatey
+collect p_h=r(p), tag(model[(2)]): mi test 1.smokingstat15x#c.gapdatey 2.smokingstat15x#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(3)]): mi estimate: regress vent_bsi2 delir2##status_composite_wm_pvc_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey socialclass#c.gapdatey i46_edu#c.gapdatey c.cogchild#c.gapdatey smokingstat15x#c.gapdatey disa_69#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(3)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect p_f=r(p), tag(model[(3)]): mi test 1.socialclass#c.gapdatey 2.socialclass#c.gapdatey
+collect p_g=r(p), tag(model[(3)]): mi test 1.i46_edu#c.gapdatey 2.i46_edu#c.gapdatey
+collect p_h=r(p), tag(model[(3)]): mi test 1.smokingstat15x#c.gapdatey 2.smokingstat15x#c.gapdatey
+
+collect layout (colname#result result[p_e p_f p_g p_h]) (model)
+collect style cell, nformat(%5.2f)
+collect style cell result [_r_ci], sformat("(%s)") cidelimiter(", ")
+collect style cell result [_r_p], nformat(%5.2f)
+collect style cell border_block, border(right, pattern(nil))
+collect levelsof cell_type
+collect style cell cell_type[item column-header], halign(center)
+collect style header result, level(hide)
+collect style column, extraspace(1)
+collect style row stack, spacer delimiter(" x ")
+collect style header result[p_e p_f p_g p_h], level(label)
+collect label levels result p_e "p-value for chronic disease count" p_f "p-value for social class" p_g "p-value for educational attainment" p_h "p-value for smoking status"
+collect style cell result [p_e p_f p_g p_h], nformat(%5.2f)
+collect style showbase off
+collect title "A priori model amyloid interaction associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
+
+collect export aprioritable2.docx, replace
+
+*AMYLOID REF CHANGE TABLE 1
+use "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2024\working set for upload.dta", clear
+drop if mjrbrain_none!=1
+mi set flong
+mi register imputed chrondisease_69 disa_69 delir2 pp_69 apoe3 wmc_tot
+mi impute chained (logit) disa_69 delir2 pp_69 apoe3 (ologit) chrondisease_69 (pmm, knn(5)) wmc_tot = brain_bsi2 hippoa2_bsi2 vent_bsi2 spm_tiv_vol1 cogchild smokingstat15x i46_edu gapdatey sex socialclass scanage, by(status_composite_wc_pvc_bl) rseed(270186) add(10) augment
+
+collect clear
+collect create cerbellaramyloidtable1
+
+collect _r_b _r_ci _r_p, tag(model[(1)]): mi estimate: regress brain_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wc_pvc_bl#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(1)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(2)]): mi estimate: regress hippoa2_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wc_pvc_bl#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(2)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(3)]): mi estimate: regress vent_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wc_pvc_bl#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(3)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+
+collect layout (colname#result result[p_e]) (model)
+collect style cell, nformat(%5.2f)
+collect style cell result [_r_ci], sformat("(%s)") cidelimiter(", ")
+collect style cell result [_r_p], nformat(%5.2f)
+collect style cell border_block, border(right, pattern(nil))
+collect levelsof cell_type
+collect style cell cell_type[item column-header], halign(center)
+collect style header result, level(hide)
+collect style column, extraspace(1)
+collect style row stack, spacer delimiter(" x ")
+collect style header result[p_e], level(label)
+collect label levels result p_e "p-value for chronic disease count"
+collect style cell result [p_e], nformat(%5.2f)
+collect style showbase off
+collect title "Cerebellar amyloid associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
+
+collect export cerbellaramyloidtable1.docx, replace
+
+*AMYLOID REF CHANGE TABLE 2
+collect clear
+collect create cerbellaramyloidtable2
+
+collect _r_b _r_ci _r_p, tag(model[(1)]): mi estimate: regress brain_bsi2 delir2##status_composite_wc_pvc_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(1)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(2)]): mi estimate: regress hippoa2_bsi2 delir2##status_composite_wc_pvc_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(2)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+collect _r_b _r_ci _r_p, tag(model[(3)]): mi estimate: regress vent_bsi2 delir2##status_composite_wc_pvc_bl#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
+collect p_e=r(p), tag(model[(3)]): mi test 1.chrondisease_69#c.gapdatey 2.chrondisease_69#c.gapdatey 3.chrondisease_69#c.gapdatey
+
+collect layout (colname#result result[p_e]) (model)
+collect style cell, nformat(%5.2f)
+collect style cell result [_r_ci], sformat("(%s)") cidelimiter(", ")
+collect style cell result [_r_p], nformat(%5.2f)
+collect style cell border_block, border(right, pattern(nil))
+collect levelsof cell_type
+collect style cell cell_type[item column-header], halign(center)
+collect style header result, level(hide)
+collect style column, extraspace(1)
+collect style row stack, spacer delimiter(" x ")
+collect style header result[p_e], level(label)
+collect label levels result p_e "p-value for chronic disease count"
+collect style cell result [p_e], nformat(%5.2f)
+collect style showbase off
+collect title "Cerebellar amyloid associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
+
+collect export cerbellaramyloidtable2.docx, replace
+
 
 *-----------------------------------------------------GENERATE GRAPHS-----------------------------------------------------
 *FOREST PLOT (FIGURE 1)
 estimates drop _all
-mi estimate: qui regress brain_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_bl#c.gapdatey apoe3#c.gapdatey c.gapdatey, nocons
+mi estimate: qui regress brain_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_pvc_bl#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.gapdatey, nocons
 estimates store Aa
-mi estimate: qui regress hippoa_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey status_composite_wm_bl#c.gapdatey c.gapdatey, nocons
+mi estimate: qui regress hippoa2_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_pvc_bl#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
 estimates store Bb
-mi estimate: qui regress vent_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey socialclass#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey apoe3#c.gapdatey status_composite_wm_bl#c.gapdatey c.gapdatey, nocons
+mi estimate: qui regress vent_bsi2 delir2#c.gapdatey sex#c.gapdatey c.spm_tiv_vol1#c.gapdatey chrondisease_69#c.gapdatey pp_69#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_pvc_bl#c.gapdatey apoe3#c.gapdatey c.scanage#c.gapdatey c.brain_bsi2#c.gapdatey c.gapdatey, nocons
 estimates store Cc
 estout Aa Bb Cc
-coefplot Aa, drop(_cons) xline(0) nolabels name(graph1)
-coefplot Bb, drop(_cons) xline(0) nolabels name(graph2) 
-coefplot Cc, drop(_cons) xline(0) nolabels name(graph3)
+coefplot Aa, drop(_cons gapdatey) xline(0) nolabels name(graph1)
+coefplot Bb, drop(_cons gapdatey c.brain_bsi2#c.gapdatey) xline(0) nolabels name(graph2) 
+coefplot Cc, drop(_cons gapdatey c.brain_bsi2#c.gapdatey) xline(0) nolabels name(graph3)
 graph combine graph1 graph2 graph3
