@@ -1,9 +1,9 @@
 *-----------------------------------------------------ANALYSES-----------------------------------------------------
 *USE CURRENT DATA OF ALL 502 INSIGHT PARTICIPANTS
 clear
-use "PATH//Datasets/FINAL5_analysis2.dta"
+use "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL5_analysis2.dta"
 drop _merge
-merge 1:1 nshdid_ntag1 using "PATH//Datasets/FINAL_fram.dta"
+merge 1:1 nshdid_ntag1 using "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL_fram.dta"
 drop _merge
 drop if brain_bsi==.
 drop if dementia_i46p2==1
@@ -18,7 +18,7 @@ replace delirmid=1 if deliry==2019
 gen delir3 = delir2
 replace delir3=0 if delirmid==1
 
-save "PATH//Datasets/FINAL5_analysis3.dta", replace
+save "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL5_analysis3.dta", replace
 
 /*gen delir2=delir
 replace delir2=0 if deliry<=1997
@@ -76,7 +76,7 @@ egen stdhippo = std(hippoa_bsi)
 egen stdvent = std(vent_bsi)
 */
 
-/*use"PATH//Datasets/FINAL5_analysis3.dta",
+/*use"S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL5_analysis3.dta",
 
 recode NFL_N4PE_plasma_p1 (-99=.)
 gen nfl2 = ln(NFL_N4PE_plasma_p1) / ln(2)
@@ -100,11 +100,11 @@ mi register imputed pacc_i46p2 apoe delir2 wmc_tot acetotfin15x gapdatey vr_69 s
 
 mi impute chained (regress) nfl2 acetotfin15x (logit) delir2 apoe status_composite_wm_pvc_bl status_composite_wc_pvc_bl (pmm, knn(5)) fhs69_clinic_risk_acc wmc_10 pacc_i46p2 vr_69 ss_69 = sex edu cogchild smokingstat15x spm_tiv_vol1 brain_vol1 hippoa_vol1 vent_vol1 spm_wm_vol1 spm_gm_vol1 disa_69 chrondisease_69 pacc_i46p1 pp_69 socialclass brain_vol2 brain_bsi hippoa_vol2 hippoa_bsi vent_vol2 vent_bsi wm_vol_change gm_vol_change gapdatey stdhippo stdbrain stdvent, rseed(270186) add(20) augment
 
-save "PATH//Datasets/FINAL5_imputed_analysis_delir.dta", replace
+save "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL5_imputed_analysis_delir.dta", replace
 */
 
 
-use "PATH//Datasets/FINAL5_analysis3.dta"
+use "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL5_analysis3.dta"
 
 recode NFL_N4PE_plasma_p1 (-99=.)
 gen nfl2 = ln(NFL_N4PE_plasma_p1) / ln(2)
@@ -128,7 +128,7 @@ mi register imputed pacc_i46p2 apoe delir2 delir3 wmc_tot acetotfin15x gapdatey 
 
 mi impute chained (regress) nfl2 acetotfin15x (logit) delir3 apoe status_composite_wm_pvc_bl status_composite_wc_pvc_bl (pmm, knn(5)) fhs69_clinic_risk_acc wmc_10 pacc_i46p2 vr_69 ss_69 = sex edu cogchild smokingstat15x spm_tiv_vol1 brain_vol1 hippoa_vol1 vent_vol1 spm_wm_vol1 spm_gm_vol1 disa_69 chrondisease_69 pacc_i46p1 pp_69 socialclass brain_vol2 brain_bsi hippoa_vol2 hippoa_bsi vent_vol2 vent_bsi wm_vol_change gm_vol_change gapdatey stdhippo stdbrain stdvent, rseed(270186) add(20) augment
 
-save "PATH//Datasets/FINAL5_imputed_analysis_delir3.dta", replace
+save "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL5_imputed_analysis_delir3.dta", replace
 
 /*
 *IF WANTING TO IMPUTE A SECOND BRAIN SCAN BASED ON OUTCOME OF THE FIRST
@@ -140,7 +140,7 @@ mi register imputed brain_vol2 brain_bsi hippoa_vol2 hippoa_bsi vent_vol2 vent_b
 mi impute chained (regress) nfl2 acetotfin15x (logit) delir2 apoe status_composite_wm_pvc_bl status_composite_wc_pvc_bl (pmm, knn(5)) brain_bsi hippoa_bsi vent_bsi brain_vol2 hippoa_vol2 vent_vol2 wmc_tot gapdatey wm_vol_change gm_vol_change pacc_i46p2 vr_69 ss_69 = sex edu cogchild smokingstat15x spm_tiv_vol1 brain_vol1 hippoa_vol1 vent_vol1 spm_wm_vol1 spm_gm_vol1 pacc_i46p1 pp_69 disa_69 chrondisease_69 socialclass, rseed(270186) add(25) augment*/
 
 clear
-use "PATH//Datasets/FINAL5_analysis3.dta"
+use "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL5_analysis3.dta"
 
 recode NFL_N4PE_plasma_p1 (-99=.)
 gen nfl2 = ln(NFL_N4PE_plasma_p1) / ln(2)
@@ -188,7 +188,7 @@ collect notes "BSI: Boundary Shift Integral"
 collect style title, font(,bold)
 collect title "Table 1: Complete case associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
 
-collect export "PATH//complete_case_analysis_table.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\complete_case_analysis_table.docx", replace
 
 *BOOTSTRAP TO CHECK TABLE ONE VALIDITY
 bootstrap, reps(2000) seed(270186) bca: regress vent_bsi delir2#c.gapdatey sex#c.gapdatey c.cogchild#c.gapdatey i.edu#c.gapdatey socialclass#c.gapdatey c.fhs69_clinic_risk_acc#c.gapdatey pp_69#c.gapdatey i.smokingstat15x#c.gapdatey apoe#c.gapdatey c.spm_tiv_vol1#c.gapdatey c.wmc_10#c.gapdatey status_composite_wm_pvc_bl#c.gapdatey c.nfl2#c.gapdatey c.scanage#c.gapdatey c.gapdatey, nocons
@@ -226,13 +226,13 @@ collect style cell result [p_g], nformat(%5.3f)
 collect style showbase off
 collect title "Complete case amyloid, wmhv and nfl2 adjusted associations between total brain volume change and delirium"
 
-collect export "PATH//complete_case_analysis_table2.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\complete_case_analysis_table2.docx", replace
 
 
 *-----------------------------------------------------IMPUTED DATA-----------------------------------------------------
 *IMPUTE
 clear
-use "PATH//Datasets/FINAL5_imputed_analysis.dta"
+use "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL5_imputed_analysis.dta"
 
 *FINAL MODEL TABLE ONE
 collect clear
@@ -271,7 +271,7 @@ collect notes "BSI: Boundary Shift Integral"
 collect style title, font(,bold)
 collect title "Table 1: associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
 
-collect export "PATH//analysis_table.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\analysis_table.docx", replace
 
 *FINAL MODEL TABLE 2
 collect clear
@@ -305,7 +305,7 @@ collect style cell result [p_g], nformat(%5.3f)
 collect style showbase off
 collect title "amyloid, wmhv and nfl2 adjusted associations between total brain volume change and delirium"
 
-collect export "PATH//analysis_table2.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\analysis_table2.docx", replace
 
 *-----------------------------------------------CROSS SECTIONAL OUTCOMES--------------------------------------------------
 *WAVE ONE VOLUMES CROSS SECTIONAL
@@ -345,7 +345,7 @@ collect notes "BSI: Boundary Shift Integral"
 collect style title, font(,bold)
 collect title "Table 1: delir 3 associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
 
-collect export "PATH//CSanalysis_table_wave1_delir3.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\CSanalysis_table_wave1_delir3.docx", replace
 
 *WAVE TWO VOLUMES CROSS SECTIONAL
 collect clear
@@ -384,7 +384,7 @@ collect notes "BSI: Boundary Shift Integral"
 collect style title, font(,bold)
 collect title "Table 1: Complete case associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
 
-collect export "PATH//CSanalysis_table_wave2.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\CSanalysis_table_wave2.docx", replace
 
 *COGNITIVE OUTCOMES
 collect clear
@@ -418,7 +418,7 @@ collect style showbase off
 collect style title, font(,bold)
 collect title "Cognitive outcomes, ace, vr, ss, pacc1, pacc2"
 
-collect export "PATH//CSanalysis_table_cog_delir3.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\CSanalysis_table_cog_delir3.docx", replace
 
 *----------------------------------------------SENSITIVITY ANALYSES-------------------------------------------------------
 
@@ -446,7 +446,7 @@ collect notes "BSI: Boundary Shift Integral"
 collect style title, font(,bold)
 collect title "Table 1: Complete case associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
 
-collect export "PATH//limitedmodel_table.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\limitedmodel_table.docx", replace
 
 *SEX ADJUSTED TABLE 2
 collect clear
@@ -469,7 +469,7 @@ collect style row stack, spacer delimiter(" x ")
 collect style showbase off
 collect title "Complete case amyloid, wmhv and nfl2 adjusted associations between total brain volume change and delirium"
 
-collect export "PATH//limitedmodel_table2.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\limitedmodel_table2.docx", replace
 
 *AMYLOID REF CHANGE TABLE 1
 collect clear
@@ -508,7 +508,7 @@ collect notes "BSI: Boundary Shift Integral"
 collect style title, font(,bold)
 collect title "Table 1: Complete case associations between total brain, hippocampal and ventricular volume change (BSI) and delirium"
 
-collect export "PATH//analysiscerebellum_table.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\analysiscerebellum_table.docx", replace
 
 *AMYLOID REF CHANGE TABLE 2
 collect clear
@@ -542,7 +542,7 @@ collect style cell result [p_g], nformat(%5.3f)
 collect style showbase off
 collect title "Complete case amyloid, wmhv and nfl2 adjusted associations between total brain volume change and delirium"
 
-collect export "PATH//analysiscerebellum_table2.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\analysiscerebellum_table2.docx", replace
 
 
 *AMYLOID SUVR CHANGE TABLE 1
@@ -582,7 +582,7 @@ collect notes "BSI: Boundary Shift Integral"
 collect style title, font(,bold)
 collect title "Table 1: Complete case associations between total brain, hippocampal and ventricular volume change (BSI) and delirium suvr adjusted"
 
-collect export "PATH//analysissuvr_table.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\analysissuvr_table.docx", replace
 
 *AMYLOID SUVR CHANGE TABLE 2
 collect clear
@@ -616,7 +616,7 @@ collect style cell result [p_g], nformat(%5.3f)
 collect style showbase off
 collect title "Complete case amyloid, wmhv and nfl2 adjusted associations between total brain volume change and delirium suvr adjusted"
 
-collect export "PATH//analysissuvr_table2.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\analysissuvr_table2.docx", replace
 
 *DISPROPORTIONATE BSI MODEL TABLE ONE
 collect clear
@@ -644,11 +644,11 @@ collect style cell result [p_g], nformat(%5.3f)
 collect style showbase off
 collect title "Associations between hippocampal and ventricular volume change (BSI) and delirium, adjusted for baseline rate of whole-brain change"
 
-collect export "PATH//hippobsi_table.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\hippobsi_table.docx", replace
 
 *-----------------------------------------------------GENERATE GRAPHS-----------------------------------------------------
 *FOREST PLOT (FIGURE 1)
-use "PATH//Datasets/FINAL5_imputed_analysis.dta", clear
+use "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL5_imputed_analysis.dta", clear
 set scheme mrc
 estimates drop _all
 graph drop _all
@@ -670,12 +670,12 @@ coefplot Cc Dd, keep(1.delir2#c.gapdatey c.wmc_10#c.gapdatey 1.status_composite_
 coefplot Ee Ff, keep(1.delir2#c.gapdatey c.wmc_10#c.gapdatey 1.status_composite_wm_pvc_bl#c.gapdatey c.nfl2#c.gapdatey) xline(0) nolabels name(graph3) title("Ventricles") coeflabels(1.delir2#c.gapdatey = "Delirium" c.wmc_10#c.gapdatey = "WMHV" 1.status_composite_wm_pvc_bl#c.gapdatey = "Aβ Positivity" c.nfl2#c.gapdatey = "NfL") ciopts(recast(rcap)) legend(order(2 "Model one" 4 "Model two"))
 graph combine graph1 graph2 graph3
 
-graph export "PATH//forest_plot22.pdf", replace
+graph export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\forest_plot22.pdf", replace
 
 
 
 *FOREST PLOT (FIGURE 1v2)
-use "PATH//Datasets/FINAL5_imputed_analysis.dta", clear
+use "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL5_imputed_analysis.dta", clear
 estimates drop _all
 graph drop _all
 
@@ -697,12 +697,12 @@ estimates store Ff
 estout Aa Bb Cc Dd Ee Ff
 coefplot Aa Bb Cc Dd Ee Ff, keep(1.delir2#c.gapdatey c.wmc_10#c.gapdatey 1.status_composite_wm_pvc_bl#c.gapdatey c.nfl2#c.gapdatey) vertical nolabels coeflabels(1.delir2#c.gapdatey = "Delirium" c.wmc_10#c.gapdatey = "WMHV" 1.status_composite_wm_pvc_bl#c.gapdatey = "Aβ Positivity" c.nfl2#c.gapdatey = "NfL") ciopts(recast(rcap)) yline(0, lp(dash)) legend(size(vsmall) symx(small) pos(6) order(2 "Whole Brain (Model one)" 6 "Hippocampal (Model one)" 10 "Ventricular (Model one)" 4 "Whole Brain (Model two)" 8 "Hippocampal (Model two)" 12 "Ventricular (Model two)") cols(3) rows(2)) ytitle("Standardised BSI")
 
-graph export "PATH//forest_plot_v22.pdf", replace
+graph export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\forest_plot_v22.pdf", replace
 
 
 
 
-use "PATH//Datasets/FINAL5_analysis3.dta", clear
+use "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL5_analysis3.dta", clear
 foreach y in brain_bsi hippoa_bsi vent_bsi {
 	 qui regress `y' delir2#c.gapdatey sex#c.gapdatey c.cogchild#c.gapdatey i.edu#c.gapdatey socialclass#c.gapdatey c.fhs69_clinic_risk_acc#c.gapdatey pp_69#c.gapdatey i.smokingstat15x#c.gapdatey apoe#c.gapdatey c.spm_tiv_vol1#c.gapdatey c.wmc_tot#c.gapdatey status_composite_wm_pvc_bl#c.gapdatey c.nfl2#c.gapdatey c.scanage#c.gapdatey c.gapdatey, nocons
 	summarize gapdatey
@@ -713,9 +713,9 @@ foreach y in brain_bsi hippoa_bsi vent_bsi {
 
 graph combine brain_bsi_plot hippoa_bsi_plot vent_bsi_plot, title("Predicted brain metrics by delirium status") note("Fully adjusted")
 
-graph export "PATH//margins_plot_v2.pdf", replace
+graph export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\margins_plot_v2.pdf", replace
 
-use "PATH//Datasets/FINAL5_analysis3.dta", clear
+use "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL5_analysis3.dta", clear
 
 /*use margins_brain_bsi, clear
 rename brain_bsi_margin margin
@@ -728,14 +728,14 @@ replace margin = vent_bsi_margin if vwnt_bsi_margin !=.
 replace outcome = "Ventricle" if outcome==""
 
 graph hbar margin, over(delir2) over(outcome) title("Predicted brain metrics by delirium status") subtitle("Evaluated at mean follow up time") ytitle("Predicted BSI") note("Fully adjusted")
-graph export "PATH//margins_plot.pdf"
+graph export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\margins_plot.pdf"
 */
 
 *--------------------------------------------------POST HOC ANALYSES--------------------------------------------------
 *WM GM CHANGE
-use "PATH//Datasets/FINAL5_imputed_analysis.dta", clear
+use "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL5_imputed_analysis.dta", clear
 /*gen nfl2 = nfl / ln(2)
-save "PATH//Datasets/FINAL5_imputed_analysis.dta", replace
+save "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL5_imputed_analysis.dta", replace
 */
 collect clear
 collect create wmgmtable2
@@ -768,7 +768,7 @@ collect notes "BSI: Boundary Shift Integral"
 collect style title, font(,bold)
 collect title "Table 1: White and grey matter change versus delirium"
 
-collect export "PATH//whitegreymatterchange_table.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\whitegreymatterchange_table.docx", replace
 
 collect clear
 collect create wmgmtable3
@@ -792,14 +792,14 @@ collect notes "BSI: Boundary Shift Integral"
 collect style title, font(,bold)
 collect title "Table 1: White and grey matter change versus delirium"
 
-collect export "PATH//whitegreymatterchange_table2.docx", replace
+collect export "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\whitegreymatterchange_table2.docx", replace
 
 
 
 ***FINAL GRAPH (JN SUGGESTION)
 
 *FOREST PLOT (FIGURE 1)
-use "PATH//Datasets/FINAL5_imputed_analysis.dta", clear
+use "S:\LHA_MR1021\Amyloid, Volumetric & DTI x ACBS\2025 Final Edits\Datasets\FINAL5_imputed_analysis.dta", clear
 egen stdgm = std(gm_vol_change)
 egen stdwm = std(wm_vol_change)
 set scheme mrc
